@@ -1,10 +1,11 @@
 import {  useEffect, useState } from "react";
-import { WORD_URL, ALPHABET } from "../constants";
+import Loader from './Loader'
+import { WORD_URL, ALPHABET, ATTEMPTS } from '../constants'
 
 function Game() {
   const [word, setWord] = useState<string>('')
   const [pressedKey, setPressedKey] = useState<string | null>(null)
-  const [attemptsLeft, setAttemptsLeft] = useState(8)
+  const [attemptsLeft, setAttemptsLeft] = useState(ATTEMPTS)
   const [guessedLetters, setGuessedLetters] = useState<(string | null)[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
@@ -32,7 +33,7 @@ function Game() {
       }
     }
     getWord()
-  },[])
+  }, [])
 
   useEffect(() => {
     setGuessedLetters(Array(word.length).fill(null))
@@ -41,7 +42,7 @@ function Game() {
   const restartGame = async () => {
     try {
       setIsLoading(true)
-      setAttemptsLeft(8)
+      setAttemptsLeft(ATTEMPTS)
       const word = await fetchWord()
       setWord(word)
       setGuessedLetters(Array(word.length).fill(null))
@@ -56,7 +57,10 @@ function Game() {
     const handleKeyDown = (event: KeyboardEvent) => {
       const { key } = event
       const isAlphabet = ALPHABET.includes(key.toLowerCase())
-      if (isAlphabet) {
+
+      if (isGameEnd && key === 'Enter') {
+        restartGame()
+      } else if (isAlphabet) {
         setPressedKey(key)
         validateLetter(key)
       }
@@ -87,18 +91,26 @@ function Game() {
       }
     }
 
-    if (!isLetterFound && attemptsLeft > 0 && !(isWin || isLose)) {
-      setAttemptsLeft(prevState => prevState - 1)
+    if (!isLetterFound && attemptsLeft > 0 && !isGameEnd) {
+      setAttemptsLeft((prevState) => prevState - 1)
     } else {
       setGuessedLetters(updatedLetters)
     }
   }
 
-  const isWin = guessedLetters.length > 0 && guessedLetters.every(letter => letter !== null)
+  const isWin =
+    guessedLetters.length > 0 &&
+    guessedLetters.every((letter) => letter !== null)
   const isLose = attemptsLeft === 0
+  const isGameEnd = isWin || isLose
 
   const RestartButton = () => (
-    <button onClick={restartGame} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">Play Again</button>
+    <button
+      onClick={restartGame}
+      className='mt-2 px-4 py-2 bg-blue-500 text-white rounded'
+    >
+      Play Again
+    </button>
   )
 
   const handleAttemptColor = (attemptsLeft: number) => {
@@ -114,10 +126,9 @@ function Game() {
   return (
     <>
       {isLoading ? (
-        <h1 className='text-center mt-4'>Loading...</h1>
+        <Loader className='self-center mt-8' />
       ) : (
         <>
-          {/* <h1 className="uppercase tracking-widest text-center">{word}</h1> */}
           <h2 className='tracking-[1rem] uppercase text-center text-3xl mt-4 -mr-4'>
             {guessedLetters
               .map((letter) => (letter !== null ? letter : '_'))
@@ -133,7 +144,7 @@ function Game() {
           <div className='inline-flex flex-wrap justify-center gap-4 mt-4 max-w-[560px] px-4'>
             {ALPHABET.map((letter, i) => (
               <button
-                className={`uppercase border w-10 border-gray-800 p-2 text-center focus:outline-none lg:hover:bg-blue-500 lg:hover:text-white ${
+                className={`uppercase border w-11 h-11 border-gray-800 p-2 text-center focus:outline-none lg:hover:bg-blue-500 lg:hover:text-white ${
                   pressedKey === letter ? 'bg-blue-500 text-white' : 'bg-white'
                 }`}
                 key={i}
@@ -149,7 +160,7 @@ function Game() {
             </p>
           ) : null}
           <div className='flex flex-col items-center mt-4'>
-            {isWin || isLose ? (
+            {isGameEnd ? (
               <>
                 <h1>{isWin ? 'You win!' : 'Better luck next time!'}</h1>
                 <RestartButton />

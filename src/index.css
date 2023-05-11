@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply w-screen flex flex-col h-screen items-center;
+@layer base {
+  body {
+    @apply w-screen flex flex-col h-screen items-center;
+  }
 }

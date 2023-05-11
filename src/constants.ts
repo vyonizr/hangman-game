@@ -4,3 +4,4 @@ export const GAME_STATE = {
   PLAYING: 'PLAYING',
 }
 export const ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('')
+export const ATTEMPTS = 8
