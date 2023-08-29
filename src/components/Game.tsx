@@ -126,26 +126,26 @@ function Game() {
   return (
     <>
       {isLoading ? (
-        <Loader className='self-center mt-8' />
+        <Loader className="self-center mt-8" />
       ) : (
         <>
-          <h2 className='tracking-[1rem] uppercase text-center text-3xl mt-4 -mr-4'>
-            {guessedLetters
-              .map((letter) => (letter !== null ? letter : '_'))
-              .join('')}
+          <h2 className="uppercase inline-flex gap-4 justify-center text-center text-3xl mt-8">
+            {guessedLetters.map((letter, i) => (
+              <span key={i}>{letter !== null ? letter : "_"}</span>
+            ))}
           </h2>
-          <h2
+          <h3
             className={`text-center text-2xl mt-4 font-bold ${handleAttemptColor(
               attemptsLeft
             )}`}
           >
             {attemptsLeft}
-          </h2>
-          <div className='inline-flex flex-wrap justify-center gap-4 mt-4 max-w-[560px] px-4'>
+          </h3>
+          <div className="inline-flex flex-wrap justify-center gap-4 mt-4 px-4">
             {ALPHABET.map((letter, i) => (
               <button
                 className={`uppercase border w-11 h-11 border-gray-800 p-2 text-center focus:outline-none lg:hover:bg-blue-500 lg:hover:text-white ${
-                  pressedKey === letter ? 'bg-blue-500 text-white' : 'bg-white'
+                  pressedKey === letter ? "bg-blue-500 text-white" : "bg-white"
                 }`}
                 key={i}
                 onClick={() => validateLetter(letter)}
@@ -155,14 +155,14 @@ function Game() {
             ))}
           </div>
           {isLose ? (
-            <p className='uppercase text-2xl tracking-widest mt-8 text-center'>
+            <p className="uppercase text-2xl tracking-widest mt-8 text-center">
               {word}
             </p>
           ) : null}
-          <div className='flex flex-col items-center mt-4'>
+          <div className="flex flex-col items-center mt-4">
             {isGameEnd ? (
               <>
-                <h1>{isWin ? 'You win!' : 'Better luck next time!'}</h1>
+                <h1>{isWin ? "You win!" : "Better luck next time!"}</h1>
                 <RestartButton />
               </>
             ) : null}
